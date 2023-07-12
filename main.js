@@ -6,6 +6,31 @@ const input = document.querySelector('.input');
 const header = document.querySelector('.header');
 let city;
 
+function removeCard() {
+    const prevCard = document.querySelector('.card');//удаление предидущей карточки
+    if (prevCard) {
+        prevCard.remove();
+    }
+}
+
+function showError(errorMessage) {
+    const html = `<div class="card">${data.error.message}</div>`;
+    header.insertAdjacentHTML('afterend', html);
+}
+
+function showCard(name, country, temp_c, condition, png) {
+    let html = `<div class="card">
+    <h2 class="card-citi">${name}<span>${country}</span></h2>
+    <div class="card-weather">
+        <div class="card-temperature">${temp_c}<sup>°C</sup></div>
+        <img src="${png}" alt="weather" class="card-image">
+    </div>
+    <div class="card-descrition">${condition}</div>
+</div>`;
+
+    header.insertAdjacentHTML('afterend', html);
+}
+
 form.onsubmit = function (event) {
     event.preventDefault(); //отмена отпрвки формы
     city = input.value.trim();
@@ -18,29 +43,12 @@ form.onsubmit = function (event) {
         console.log(data);
 
         if (data.error) {//если есть ошибка
-            const prevCard = document.querySelector('.card');//удаление предидущей карточки
-            if (prevCard) {
-                prevCard.remove();
-            }
-
-            const html = `<div class="card">${data.error.message}</div>`;
-            header.insertAdjacentHTML('afterend', html);
+            removeCard();
+            showError(data.error.message);
         } else {
-            const prevCard = document.querySelector('.card');//удаление предидущей карточки
-            if (prevCard) {
-                prevCard.remove();
-            }
+            removeCard();
 
-            let html = `<div class="card">
-                        <h2 class="card-citi">${data.location.name}<span>${data.location.country}</span></h2>
-                        <div class="card-weather">
-                            <div class="card-temperature">${data.current.temp_c}<sup>°C</sup></div>
-                            <img src="cloudy_1146869.png" alt="weather" class="card-image">
-                        </div>
-                        <div class="card-descrition">${data.current.condition.text}</div>
-                    </div>`;
-
-            header.insertAdjacentHTML('afterend', html);
+        showCard(data.location.name, data.location.country, data.current.temp_c, data.current.condition.text, data.current.condition.icon);
         }
     });
 }
